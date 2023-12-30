@@ -1,3 +1,4 @@
+# resolving imports
 import pygame
 import sys
 from Scripts.entities import PhysicsEntity
@@ -16,7 +17,7 @@ class Game:
         # change window caption
         pygame.display.set_caption('Samurai Den')
         
-        # fix player visibility
+        # fix player visibility and produce pixelated effect
         self.display = pygame.Surface((320, 240))
 
         # clocking the game
@@ -50,7 +51,7 @@ class Game:
             self.tilemap.render(self.display)
             
             # player movements
-            self.player.update((self.movement[1] - self.movement[0], 0))
+            self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))
             self.player.render(self.display)
                         
             # to prevent exiting of the game
@@ -60,17 +61,20 @@ class Game:
                     sys.exit()
                     
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_LEFT:
                         self.movement[0] = True
                         
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_RIGHT:
                         self.movement[1] = True
+                        
+                    if event.key == pygame.K_UP:
+                        self.player.velocity[1] = -3
                 
                 if event.type == pygame.KEYUP:
-                    if event.key == pygame.K_RIGHT:
+                    if event.key == pygame.K_LEFT:
                         self.movement[0] = False
                         
-                    if event.key == pygame.K_LEFT:
+                    if event.key == pygame.K_RIGHT:
                         self.movement[1] = False
         
         

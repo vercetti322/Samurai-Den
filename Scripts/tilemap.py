@@ -2,7 +2,7 @@
 import pygame
 
 # collisions from neighbours
-NEIGHBOUR_OFFSETS = [(1, 0), (0, 1), (-1, 0), (0, -1), (0, 0), (-1, -1), (1, 1), (1, -1), (-1, 1)]
+NEIGHBOUR_OFFSETS = [(-1, 0), (-1, -1), (0, -1), (1, -1), (1, 0), (0, 0), (-1, 1), (0, 1), (1, 1)]
 PHYSICS_TILES = {'grass', 'stone'}
 
 class Tilemap:
@@ -29,7 +29,7 @@ class Tilemap:
             
     def tiles_around(self, pos):
         tiles = []
-        tile_loc = (int(pos[0] // self.tile_size))
+        tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
         for offset in NEIGHBOUR_OFFSETS:
             check_loc = str(tile_loc[0] + offset[0]) + ';' + str(tile_loc[1] + offset[1])
             if check_loc in self.tilemap:
