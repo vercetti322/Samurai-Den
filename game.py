@@ -4,6 +4,7 @@ import sys
 from Scripts.entities import PhysicsEntity
 from Scripts.utils import load_image, load_images
 from Scripts.tilemap import Tilemap
+from Scripts.clouds import Clouds
 
 # create the Game class
 class Game:
@@ -32,7 +33,9 @@ class Game:
             'decor': load_images('tiles/decor'),
             'grass': load_images('tiles/grass'),
             'large_decor': load_images('tiles/large_decor'),
-            'stone': load_images('tiles/stone')
+            'stone': load_images('tiles/stone'),
+            'background': load_image('background.png'),
+            'clouds': load_images('clouds'),
         }
         
         # define our moving player
@@ -40,19 +43,34 @@ class Game:
         
         # defining our tiles
         self.tilemap = Tilemap(self, tile_size=16)
+        
+        # defining our camera movements
+        self.scroll = [0, 0]
+        
+        # create the clouds for background
+        self.clouds = Clouds(self.assets['clouds'], count=16 )
 
     def run(self):
     # create the game loop to synch with the clock and update the screen
         while True:
             # create a screen color
-            self.display.fill((14, 219, 248))
+            self.display.blit(self.assets['background'], (0, 0))
+            
+            # move the camera
+            self.scroll[0] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[0]) / 30
+            self.scroll[1] += (self.player.rect().centerx - self.display.get_width() / 2 - self.scroll[1]) / 30
+            render_scroll = (int(self.scroll[0]), int(self.scroll[1]))
+            
+            # render the clouds first
+            self.clouds.update()
+            self.clouds.render(self.display, offset=render_scroll)
             
             # render the tilemap
-            self.tilemap.render(self.display)
+            self.tilemap.render(self.display, offset=self.scroll)
             
             # player movements
             self.player.update(self.tilemap, (self.movement[1] - self.movement[0], 0))
-            self.player.render(self.display)
+            self.player.render(self.display, offset=render_scroll)
                         
             # to prevent exiting of the game
             for event in pygame.event.get():

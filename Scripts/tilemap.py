@@ -18,15 +18,21 @@ class Tilemap:
             self.tilemap[';10' + str(i + 5)] = {'type' : 'stone', 'variant' : 1, 'pos' : (10, i + 5)}
             
     # render the tiles
-    def render(self, surf):
+    def render(self, surf, offset=(0, 0)):
         for tile in self.offgrade_tiles:
-            surf.blit(self.game.assets[tile['type']][tile['variant']], tile['pos'])
-            
-        # we want the offgrade_tiles to go first as they will be rendered behind our main tilemap
-        for loc in self.tilemap:
-            tile = self.tilemap[loc]
-            surf.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size, tile['pos'][1] * self.tile_size))
-            
+            surf.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] - offset[0], tile['pos'][1] - offset[1]))
+        
+        for x in range(int(offset[0] // self.tile_size), int((offset[0] + surf.get_width()) // self.tile_size + 1)):
+            for y in range(int(offset[1] // self.tile_size), int((offset[1] + surf.get_height()) // self.tile_size + 1)):
+                loc = str(x) + ';' + str(y)
+                if loc in self.tilemap:
+                    tile = self.tilemap[loc]
+                    surf.blit(self.game.assets[tile['type']][tile['variant']], (tile['pos'][0] * self.tile_size - offset[0], tile['pos'][1] * self.tile_size - offset[1]))
+      
+        # # we want the offgrade_tiles to go first as they will be rendered behind our main tilemap
+        # for loc in self.tilemap:
+        #     tile = self.tilemap[loc]
+              
     def tiles_around(self, pos):
         tiles = []
         tile_loc = (int(pos[0] // self.tile_size), int(pos[1] // self.tile_size))
